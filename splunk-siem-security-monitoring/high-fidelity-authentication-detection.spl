@@ -1,0 +1,12 @@
+index=security_lab (action="failed" OR action="success")
+| eval failure_time=if(action="failed", _time, null())
+| eval success_time=if(action="success", _time, null())
+| stats count(eval(action="failed")) AS failures
+        max(failure_time) AS last_failure
+        max(success_time) AS latest_success
+        BY user src_ip
+| where failures >= 5 AND latest_success > last_failure
+| eval seconds_to_success=latest_success-last_failure
+| where seconds_to_success <= 300
+| convert ctime(last_failure) ctime(latest_success)
+| sort - failures

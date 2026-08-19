@@ -1,0 +1,4 @@
+index=security_lab action="failed"
+| stats count AS failed_attempts dc(user) AS targeted_users values(user) AS users BY src_ip
+| where failed_attempts >= 5
+| sort - failed_attempts

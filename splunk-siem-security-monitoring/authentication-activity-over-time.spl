@@ -1,0 +1,2 @@
+index=security_lab (action="failed" OR action="success")
+| timechart span=1h count BY action
